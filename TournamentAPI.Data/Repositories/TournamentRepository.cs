@@ -30,9 +30,14 @@ namespace TournamentAPI.Data.Repositories
             return await _context.Tournament.AnyAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<Tournament>> GetAllAsync()
+        public async Task<IEnumerable<Tournament>> GetAllAsync(bool showGames = false)
         {
-            return await _context.Tournament.ToListAsync();
+            IQueryable<Tournament> q = _context.Tournament;
+            if ( showGames)
+            {
+                q = q.Include(t => t.Games);
+            }
+            return await q.ToListAsync();
         }
 
         public async Task<Tournament> GetAsync(int id)

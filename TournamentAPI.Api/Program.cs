@@ -11,7 +11,8 @@ builder.Services.AddDbContext<TournamentAPIApiContext>(options =>
 // Add services to the container.
 
 //builder.Services.AddControllers();
-builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true).AddNewtonsoftJson().AddXmlDataContractSerializerFormatters();
+builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true).AddNewtonsoftJson(opt => 
+    opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore).AddXmlDataContractSerializerFormatters();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

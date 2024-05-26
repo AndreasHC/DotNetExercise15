@@ -32,9 +32,9 @@ namespace TournamentAPI.Api.Controllers
 
         // GET: api/Tournaments
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Tournament>>> GetTournament()
+        public async Task<ActionResult<IEnumerable<Tournament>>> GetTournament(bool showGames = false)
         {
-            return Ok(new ActionResult<IEnumerable<Tournament>>(await _uoW.TournamentRepository.GetAllAsync()));
+            return Ok(new ActionResult<IEnumerable<Tournament>>(await _uoW.TournamentRepository.GetAllAsync(showGames)));
         }
 
         // GET: api/Tournaments/5
@@ -47,6 +47,7 @@ namespace TournamentAPI.Api.Controllers
             {
                 return NotFound();
             }
+
 
             return Ok(_mapper.Map<Tournament, TournamentDto>(tournament));
         }
