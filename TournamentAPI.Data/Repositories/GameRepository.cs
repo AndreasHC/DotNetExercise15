@@ -29,9 +29,14 @@ namespace TournamentAPI.Data.Repositories
             return await _context.Game.AnyAsync(e => e.Id == id);
         }
 
-        public async Task<IEnumerable<Game>> GetAllAsync()
+        public async Task<IEnumerable<Game>> GetAllAsync(string search)
         {
-            return await _context.Game.ToListAsync();
+            IQueryable<Game> q = _context.Game;
+            if (!string.IsNullOrEmpty(search))
+            {
+                q = q.Where(g => g.Title == search);
+            }
+            return await q.ToListAsync();
         }
 
         public async Task<Game> GetAsync(int id)
