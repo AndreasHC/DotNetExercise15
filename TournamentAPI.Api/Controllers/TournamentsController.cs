@@ -9,6 +9,8 @@ using TournamentAPI.Data.Data;
 using TournamentAPI.Core.Entities;
 using TournamentAPI.Core.Repositories;
 using Bogus.DataSets;
+using AutoMapper;
+using TournamentAPI.Core.Dto;
 
 namespace TournamentAPI.Api.Controllers
 {
@@ -18,10 +20,12 @@ namespace TournamentAPI.Api.Controllers
     {
         //private readonly TournamentAPIApiContext _context;
         private readonly IUoW _uoW;
+        private readonly IMapper _mapper;
 
-        public TournamentsController(IUoW uoW)
+        public TournamentsController(IUoW uoW, IMapper mapper)
         {
             _uoW = uoW;
+            _mapper = mapper;
         }
 
         // GET: api/Tournaments
@@ -33,7 +37,7 @@ namespace TournamentAPI.Api.Controllers
 
         // GET: api/Tournaments/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Tournament>> GetTournament(int id)
+        public async Task<ActionResult<TournamentDto>> GetTournament(int id)
         {
             var tournament = await _uoW.TournamentRepository.GetAsync(id);
 
@@ -42,7 +46,7 @@ namespace TournamentAPI.Api.Controllers
                 return NotFound();
             }
 
-            return tournament;
+            return _mapper.Map<Tournament, TournamentDto>(tournament);
         }
 
         // PUT: api/Tournaments/5
@@ -51,7 +55,7 @@ namespace TournamentAPI.Api.Controllers
         public async Task<IActionResult> PutTournament(int id, Tournament tournament)
         {
             if (id != tournament.Id)
-            {
+        {
                 return BadRequest();
             }
 
@@ -79,12 +83,12 @@ namespace TournamentAPI.Api.Controllers
         // POST: api/Tournaments
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Tournament>> PostTournament(Tournament tournament)
+        public async Task<ActionResult<TournamentDto>> PostTournament(Tournament tournament)
         {
             _uoW.TournamentRepository.Add(tournament);
             await _uoW.CompleteAsync();
 
-            return CreatedAtAction("GetTournament", new { id = tournament.Id }, tournament);
+            return CreatedAtAction("GetTournament", new { id = tournament.Id }, _mapper.Map<Tournament, TournamentDto>(tournament));
         }
 
         // DELETE: api/Tournaments/5

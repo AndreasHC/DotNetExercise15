@@ -9,6 +9,8 @@ using TournamentAPI.Data.Data;
 using TournamentAPI.Core.Entities;
 using TournamentAPI.Data.Repositories;
 using TournamentAPI.Core.Repositories;
+using AutoMapper;
+using TournamentAPI.Core.Dto;
 
 namespace TournamentAPI.Api.Controllers
 {
@@ -17,11 +19,11 @@ namespace TournamentAPI.Api.Controllers
     public class GamesController : ControllerBase
     {
         private readonly IUoW _uoW;
-        //private readonly TournamentAPIApiContext _context;
-
-        public GamesController(IUoW uoW)
+        private readonly IMapper _mapper;
+        public GamesController(IUoW uoW, IMapper mapper)
         {
             _uoW = uoW;
+            _mapper = mapper;
         }
 
         // GET: api/Games
@@ -33,7 +35,7 @@ namespace TournamentAPI.Api.Controllers
 
         // GET: api/Games/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Game>> GetGame(int id)
+        public async Task<ActionResult<GameDto>> GetGame(int id)
         {
             var game = await _uoW.GameRepository.GetAsync(id);
 
@@ -42,7 +44,7 @@ namespace TournamentAPI.Api.Controllers
                 return NotFound();
             }
 
-            return game;
+            return _mapper.Map<Game,GameDto>( game);
         }
 
         // PUT: api/Games/5
@@ -79,12 +81,12 @@ namespace TournamentAPI.Api.Controllers
         // POST: api/Games
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Game>> PostGame(Game game)
+        public async Task<ActionResult<GameDto>> PostGame(Game game)
         {
             _uoW.GameRepository.Add(game);
             await _uoW.CompleteAsync();
 
-            return CreatedAtAction("GetGame", new { id = game.Id }, game);
+            return CreatedAtAction("GetGame", new { id = game.Id }, _mapper.Map<Game, GameDto>(game));
         }
 
         // DELETE: api/Games/5

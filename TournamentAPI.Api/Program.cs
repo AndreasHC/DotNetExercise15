@@ -16,6 +16,7 @@ builder.Services.AddControllers(opt => opt.ReturnHttpNotAcceptable = true).AddNe
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IUoW, UoW>();
+builder.Services.AddAutoMapper(typeof(TournamentMappings));
 
 var app = builder.Build();
 
