@@ -30,7 +30,7 @@ namespace TournamentAPI.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Game>>> GetGame()
         {
-            return new ActionResult<IEnumerable<Game>>(await _uoW.GameRepository.GetAllAsync());
+            return Ok(new ActionResult<IEnumerable<Game>>(await _uoW.GameRepository.GetAllAsync()));
         }
 
         // GET: api/Games/5
@@ -44,7 +44,7 @@ namespace TournamentAPI.Api.Controllers
                 return NotFound();
             }
 
-            return _mapper.Map<Game,GameDto>( game);
+            return Ok(_mapper.Map<Game,GameDto>( game));
         }
 
         // PUT: api/Games/5
@@ -54,7 +54,7 @@ namespace TournamentAPI.Api.Controllers
         {
             if (id != game.Id)
             {
-                return BadRequest();
+                return BadRequest("Id mismatch");
             }
 
             _uoW.GameRepository.Update(game);
@@ -71,7 +71,7 @@ namespace TournamentAPI.Api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);
                 }
             }
 

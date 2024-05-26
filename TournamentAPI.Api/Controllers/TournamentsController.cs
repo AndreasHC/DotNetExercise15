@@ -32,7 +32,7 @@ namespace TournamentAPI.Api.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Tournament>>> GetTournament()
         {
-            return new ActionResult<IEnumerable<Tournament>>(await _uoW.TournamentRepository.GetAllAsync());
+            return Ok(new ActionResult<IEnumerable<Tournament>>(await _uoW.TournamentRepository.GetAllAsync()));
         }
 
         // GET: api/Tournaments/5
@@ -46,7 +46,7 @@ namespace TournamentAPI.Api.Controllers
                 return NotFound();
             }
 
-            return _mapper.Map<Tournament, TournamentDto>(tournament);
+            return Ok(_mapper.Map<Tournament, TournamentDto>(tournament));
         }
 
         // PUT: api/Tournaments/5
@@ -73,7 +73,7 @@ namespace TournamentAPI.Api.Controllers
                 }
                 else
                 {
-                    throw;
+                    return StatusCode(500);
                 }
             }
 
