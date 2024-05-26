@@ -62,7 +62,7 @@ namespace TournamentAPI.Data.Data
                     Game game = new Game()
                     {
                         Tournament = tournament,
-                        time = faker.Date.Between(tournament.StartDate, tournament.StartDate.AddMonths(3)),
+                        Time = faker.Date.Between(tournament.StartDate, tournament.StartDate.AddMonths(3)),
                         Title = faker.Commerce.ProductName()
                     };
                     games.Add(game);

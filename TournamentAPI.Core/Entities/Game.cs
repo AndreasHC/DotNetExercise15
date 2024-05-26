@@ -13,7 +13,7 @@ namespace TournamentAPI.Core.Entities
         [Required]
         [MaxLength(100)]
         public string Title { get; set; }
-        public DateTime time { get; set; }
+        public DateTime Time { get; set; }
         public int TournamentId { get; set; }
         public Tournament? Tournament { get; set; }
     }

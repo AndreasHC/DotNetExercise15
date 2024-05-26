@@ -11,6 +11,7 @@ using TournamentAPI.Data.Repositories;
 using TournamentAPI.Core.Repositories;
 using AutoMapper;
 using TournamentAPI.Core.Dto;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace TournamentAPI.Api.Controllers
 {
@@ -104,6 +105,29 @@ namespace TournamentAPI.Api.Controllers
 
             return NoContent();
         }
+
+        [HttpPatch("{GameId}")]
+        public async Task<ActionResult<GameDto>> PatchGame(int gameId, JsonPatchDocument<GameDto> patchDocument)
+        {
+            Game game = await _uoW.GameRepository.GetAsync(gameId);
+            if (game == null)
+                return NotFound();
+            GameDto gameDto = _mapper.Map<Game, GameDto>(game);
+            patchDocument.ApplyTo(gameDto);
+            gameDto.apply_back(game);
+            try
+            {
+                await _uoW.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500);
+            }
+
+            return Ok(_mapper.Map<Game, GameDto>(game));
+
+        }
+
 
         private async Task<bool> GameExists(int id)
         {

@@ -11,6 +11,8 @@ using TournamentAPI.Core.Repositories;
 using Bogus.DataSets;
 using AutoMapper;
 using TournamentAPI.Core.Dto;
+using Azure;
+using Microsoft.AspNetCore.JsonPatch;
 
 namespace TournamentAPI.Api.Controllers
 {
@@ -55,7 +57,7 @@ namespace TournamentAPI.Api.Controllers
         public async Task<IActionResult> PutTournament(int id, Tournament tournament)
         {
             if (id != tournament.Id)
-        {
+            {
                 return BadRequest();
             }
 
@@ -105,6 +107,28 @@ namespace TournamentAPI.Api.Controllers
             await _uoW.CompleteAsync();
 
             return NoContent();
+        }
+
+        [HttpPatch("{TournamentId}")]
+        public async Task<ActionResult<TournamentDto>> PatchTournament(int tournamentId, JsonPatchDocument<TournamentDto> patchDocument)
+        {
+            Tournament tournament = await _uoW.TournamentRepository.GetAsync(tournamentId);
+            if (tournament == null)
+                return NotFound();
+            TournamentDto tournamentDto = _mapper.Map<Tournament, TournamentDto>(tournament);
+            patchDocument.ApplyTo(tournamentDto);
+            tournamentDto.apply_back(tournament);
+            try
+            {
+                await _uoW.CompleteAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return StatusCode(500);
+            }
+
+            return Ok(_mapper.Map<Tournament, TournamentDto>(tournament));
+
         }
 
         private async Task<bool> TournamentExists(int id)
